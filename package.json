@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "react": "19.1.1",
+    "react-cookie": "^8.0.1",
     "react-dom": "19.1.1",
     "react-server-dom-webpack": "19.1.1",
     "waku": "0.26.1"
