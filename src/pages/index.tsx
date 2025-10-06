@@ -3,7 +3,17 @@ import { Link } from 'waku';
 import { Counter } from '../components/counter';
 import { Project } from '../components/project';
 
+
+
 import type { ProjectObj } from '../types';
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 export default async function HomePage() {
 
@@ -35,14 +45,22 @@ export default async function HomePage() {
       <title>Charles Canata</title>
 
       <h1 className='text-3xl font-bold p-4 text-center'>Projects</h1>
-      <div className='flex space-x-4 p-10'>
-        {
-          projectArr.map((proj) => 
-            <div className='flex-1' key={proj.name}>
-              <Project {...proj}/>
-            </div>
-          )
-        }
+      <div className='flex space-x-4 p-10 bg-green-100 center justify-center'>
+        <Carousel className='bg-red-100 flex w-3/4 h-1/4'>
+          <CarouselContent>
+            {
+              projectArr.map((proj) =>
+                <CarouselItem className='basis-1/3' key={proj.name}>
+                  <div className='flex-1'>
+                  <Project {...proj} />
+                  </div>
+                </CarouselItem>
+              )
+            }
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+        </Carousel>
       </div>
     </div>
   );
