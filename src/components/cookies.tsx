@@ -1,7 +1,9 @@
 'use client';
 
+import { statsObj } from '@/types';
 import { CookiesProvider } from 'react-cookie';
 import { useCookies } from "react-cookie";
+import { updateRecord } from 'data/WebsiteStats';
 
 interface CookieValues {
     hasConsented: boolean;
@@ -11,33 +13,43 @@ interface CookieValues {
     sessionStart?: number
 }
 
-
-
-
-export const ClientAnalyticsWrapper = () => {
+export const ClientAnalyticsWrapper = (data:statsObj) => {
     return(
         <CookiesProvider>
-            <ClientAnalytics/>
+            <ClientAnalytics {...data}/>
         </CookiesProvider>
     )
 }
-const ClientAnalytics = () => {
+const ClientAnalytics = (data:statsObj) => {
     const [cookies, setCookie] = useCookies<keyof CookieValues>(['hasConsented', 'hasVisited', 'location', 'deviceType', 'sessionStart']);
 
     const getUserData = () => {
         let userAgent = window.navigator.userAgent
         let device = "";
+        let now = new Date(Date.now())
 
         if (/Mobi|Android/i.test(userAgent)) {
             device = "Mobile";
+            data["viewsByDevice"].Mobile++
+            updateRecord("viewsByDevice", data["viewsByDevice"])
         } else if (/Tablet|iPad/i.test(userAgent)) {
             device = "Tablet";
+            data["viewsByDevice"].Tablet++
+            updateRecord("viewsByDevice", data["viewsByDevice"])
         } else {
             device = "Desktop";
-    }
+            data["viewsByDevice"].Desktop++
+            updateRecord("viewsByDevice", data["viewsByDevice"])
+        }
+
         setCookie('location', 'TODO: Get location data', { path: '/' });
         setCookie('deviceType', device, { path: '/' });
-        setCookie('sessionStart', Date.now(), { path: '/' });
+        setCookie('sessionStart', `${now.getHours()}:${now.getMinutes()} on ${now.getDate()}/${now.getMonth()}/${now.getFullYear()}`, { path: '/' });
+    }
+
+    if(!cookies.hasVisited) {
+        console.log("New Visit Detected")
+        updateRecord("pageViews", data["pageViews"]+1)
     }
 
     return (
